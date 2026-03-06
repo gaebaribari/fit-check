@@ -35,8 +35,6 @@ export default function Home() {
     setAllProfiles([]);
     setSelectedUsernames(new Set());
     setProgressLog([]);
-    const startTime = Date.now();
-
     try {
       const res = await fetch("/api/tiktok/lookup", {
         method: "POST",
@@ -88,14 +86,9 @@ export default function Home() {
                   `@${event.username}: ❌ ${event.step}`,
                 ]);
               } else if (event.type === "done") {
-                const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-                const mins = Math.floor(Number(elapsed) / 60);
-                const secs = (Number(elapsed) % 60).toFixed(1);
-                const timeStr = mins > 0 ? `${mins}분 ${secs}초` : `${secs}초`;
-                alert(`총 ${event.total}명 조회 완료\n소요 시간: ${timeStr}`);
                 setProgressLog((prev) => [
                   ...prev,
-                  `✅ 완료 — ${event.completed}/${event.total}명 조회 (${timeStr})`,
+                  `✅ 완료 — ${event.completed}/${event.total}명 조회`,
                 ]);
               }
             } catch {
