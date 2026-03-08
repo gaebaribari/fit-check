@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
-import { extractUsernames, fetchSingleProfile, ProgressEvent } from "@/lib/tiktok";
+import { extractYoutubeHandles, fetchSingleYoutubeProfile } from "@/lib/youtube";
+import { ProgressEvent } from "@/lib/tiktok";
 
 export async function POST(req: NextRequest) {
   const { urls } = (await req.json()) as { urls: string[] };
@@ -11,7 +12,7 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  const usernames = extractUsernames(urls);
+  const handles = extractYoutubeHandles(urls);
 
   const stream = new ReadableStream({
     async start(controller) {
@@ -20,30 +21,29 @@ export async function POST(req: NextRequest) {
         controller.enqueue(encoder.encode(`data: ${JSON.stringify(event)}\n\n`));
       };
 
-      send({ type: "status", step: `${usernames.length}명 조회 시작` });
+      send({ type: "status", step: `${handles.length}명 조회 시작` });
 
       const CONCURRENCY = 3;
       let completed = 0;
 
-      // 동시 3명씩 병렬 처리
-      for (let i = 0; i < usernames.length; i += CONCURRENCY) {
-        const batch = usernames.slice(i, i + CONCURRENCY);
+      for (let i = 0; i < handles.length; i += CONCURRENCY) {
+        const batch = handles.slice(i, i + CONCURRENCY);
         const results = await Promise.all(
-          batch.map((username) => fetchSingleProfile(username, send))
+          batch.map((handle) => fetchSingleYoutubeProfile(handle, send))
         );
 
         for (let j = 0; j < batch.length; j++) {
           completed++;
           const profile = results[j];
           if (profile) {
-            send({ type: "profile", username: batch[j], profile, total: usernames.length, completed });
+            send({ type: "profile", username: batch[j], profile, total: handles.length, completed });
           } else {
-            send({ type: "error", username: batch[j], step: "조회 실패", total: usernames.length, completed });
+            send({ type: "error", username: batch[j], step: "조회 실패", total: handles.length, completed });
           }
         }
       }
 
-      send({ type: "done", total: usernames.length, completed });
+      send({ type: "done", total: handles.length, completed });
       controller.close();
     },
   });

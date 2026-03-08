@@ -48,13 +48,13 @@ export default function CreatorCard({ profile, selected, onToggle }: CreatorCard
           <Image
             src={profile.avatar}
             alt={profile.nickname}
-            width={56}
-            height={56}
+            width={80}
+            height={80}
             className="rounded-full object-cover"
             unoptimized
           />
         ) : (
-          <div className="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 text-xl">
+          <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 text-2xl">
             ?
           </div>
         )}
@@ -83,14 +83,14 @@ export default function CreatorCard({ profile, selected, onToggle }: CreatorCard
 
         {/* 최근 영상 썸네일 */}
         {profile.recentVideos.length > 0 ? (
-          <div className="flex gap-1.5 overflow-x-auto pb-1">
+          <div className="flex gap-2 overflow-x-auto pb-1">
             {profile.recentVideos.map((video) => (
               <div key={video.id} className="flex-shrink-0">
                 <Image
                   src={video.cover}
                   alt={video.title}
-                  width={80}
-                  height={107}
+                  width={120}
+                  height={160}
                   className="rounded object-cover"
                   unoptimized
                 />

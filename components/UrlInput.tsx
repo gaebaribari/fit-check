@@ -13,10 +13,11 @@ export default function UrlInput({ value, onChange, onSubmit, loading }: UrlInpu
       <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder={`틱톡 URL을 한 줄에 하나씩 붙여넣기\nhttps://www.tiktok.com/@username1\nhttps://www.tiktok.com/@username2\n@username3`}
+        placeholder={`틱톡/유튜브 URL을 한 줄에 하나씩 붙여넣기\nhttps://www.tiktok.com/@username1\nhttps://www.youtube.com/@channel1\n@username2`}
         rows={6}
         className="w-full px-4 py-3 border border-gray-300 rounded-lg resize-y focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-mono"
       />
+      <p className="text-xs text-gray-400">유튜브는 쇼츠 영상 기준으로 조회됩니다</p>
       <div className="flex gap-2">
         <button
           onClick={onSubmit}
