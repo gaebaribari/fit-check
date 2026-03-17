@@ -141,8 +141,8 @@ export async function fetchSingleProfile(
   let profile = await fetchProfileInfo(username).catch(() => null);
 
   for (let attempt = 1; !profile && attempt <= MAX_RETRIES; attempt++) {
-    const waitMs = 1000 + Math.random() * 2000;
-    onProgress({ type: "status", username, step: `프로필 재시도 ${attempt}/${MAX_RETRIES} (${Math.round(waitMs)}ms 대기)...` });
+    const waitMs = 3000 + Math.random() * 3000;
+    onProgress({ type: "status", username, step: `프로필 재시도 ${attempt}/${MAX_RETRIES} (${Math.round(waitMs / 1000)}초 대기)...` });
     await delay(waitMs);
     profile = await fetchProfileInfo(username).catch(() => null);
   }

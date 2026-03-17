@@ -304,10 +304,18 @@ export default function Home() {
             <textarea
               readOnly
               value={failedPopupUrls.join("\n")}
-              className="w-full h-40 p-3 border border-gray-300 rounded-lg text-sm font-mono bg-gray-50 resize-none focus:outline-none"
+              className="w-full h-40 p-3 border border-gray-300 rounded-lg text-sm font-mono bg-gray-50 text-black resize-none focus:outline-none"
               onFocus={(e) => e.target.select()}
             />
-            <div className="mt-4 flex justify-end">
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(failedPopupUrls.join("\n"));
+                }}
+                className="px-5 py-2 bg-gray-200 text-black rounded-lg font-medium hover:bg-gray-300 transition-colors"
+              >
+                전체 복사
+              </button>
               <button
                 onClick={() => setFailedPopupUrls(null)}
                 className="px-5 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"

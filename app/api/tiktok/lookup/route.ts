@@ -22,24 +22,23 @@ export async function POST(req: NextRequest) {
 
       send({ type: "status", step: `${usernames.length}명 조회 시작` });
 
-      const CONCURRENCY = 3;
       let completed = 0;
 
-      // 동시 3명씩 병렬 처리
-      for (let i = 0; i < usernames.length; i += CONCURRENCY) {
-        const batch = usernames.slice(i, i + CONCURRENCY);
-        const results = await Promise.all(
-          batch.map((username) => fetchSingleProfile(username, send))
-        );
+      // 1명씩 순차 처리 + 요청 간 3~5초 대기 (차단 방지)
+      for (let i = 0; i < usernames.length; i++) {
+        if (i > 0) {
+          const gap = 3000 + Math.random() * 2000;
+          send({ type: "status", step: `차단 방지 대기 (${Math.round(gap / 1000)}초)...` });
+          await new Promise((r) => setTimeout(r, gap));
+        }
 
-        for (let j = 0; j < batch.length; j++) {
-          completed++;
-          const profile = results[j];
-          if (profile) {
-            send({ type: "profile", username: batch[j], profile, total: usernames.length, completed });
-          } else {
-            send({ type: "error", username: batch[j], step: "조회 실패", total: usernames.length, completed });
-          }
+        const profile = await fetchSingleProfile(usernames[i], send);
+        completed++;
+
+        if (profile) {
+          send({ type: "profile", username: usernames[i], profile, total: usernames.length, completed });
+        } else {
+          send({ type: "error", username: usernames[i], step: "조회 실패", total: usernames.length, completed });
         }
       }
 
